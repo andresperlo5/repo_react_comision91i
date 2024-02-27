@@ -1,0 +1,10 @@
+.img-card img {
+  height: 30vh;
+  object-fit: cover;
+}
+
+.text-card {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

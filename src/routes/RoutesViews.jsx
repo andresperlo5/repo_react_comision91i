@@ -1,0 +1,28 @@
+import { Routes, Route } from "react-router-dom";
+import HomePage from "../pages/HomePage";
+import ErrorPage from "../pages/ErrorPage";
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
+import UserLogPage from "../pages/UserLogPage";
+import ProductPage from "../pages/ProductPage";
+import FavPage from "../pages/FavPage";
+import CartPage from "../pages/CartPage";
+
+const RoutesViews = () => {
+  return (
+    <>
+      <Routes>
+        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/home-userLog" element={<UserLogPage />} />
+        <Route path="/favorite" element={<FavPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="*" element={<ErrorPage />} />
+      </Routes>
+    </>
+  );
+};
+
+export default RoutesViews;
