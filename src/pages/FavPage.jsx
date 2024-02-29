@@ -1,9 +1,13 @@
 import { Col, Container, Row } from "react-bootstrap";
 import CardC from "../components/CardC";
+import { useEffect } from "react";
 
 const FavPage = () => {
   const userLog = JSON.parse(localStorage.getItem("user")) || "";
 
+  useEffect(() => {
+    document.title = "Usuario: Favoritos";
+  }, []);
   return (
     <>
       <Container>

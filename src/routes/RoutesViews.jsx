@@ -7,6 +7,7 @@ import UserLogPage from "../pages/UserLogPage";
 import ProductPage from "../pages/ProductPage";
 import FavPage from "../pages/FavPage";
 import CartPage from "../pages/CartPage";
+import AdminPage from "../pages/AdminPage";
 
 const RoutesViews = () => {
   return (
@@ -14,6 +15,7 @@ const RoutesViews = () => {
       <Routes>
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/home-userLog" element={<UserLogPage />} />
+        <Route path="/home-adminLog" element={<AdminPage />} />
         <Route path="/favorite" element={<FavPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/register" element={<RegisterPage />} />

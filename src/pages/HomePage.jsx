@@ -1,7 +1,12 @@
+import { useEffect } from "react";
 import Main from "../components/Main";
+import { createSuperAdmin } from "../helpers/userStatics";
 
 const HomePage = () => {
-  document.title = "Pagina Principal";
+  useEffect(() => {
+    document.title = "Pagina Principal";
+    createSuperAdmin();
+  }, []);
 
   return (
     <>

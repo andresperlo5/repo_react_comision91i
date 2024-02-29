@@ -43,10 +43,25 @@ const LoginPage = () => {
     );
 
     if (!userExist) {
+      const superAdmin = JSON.parse(localStorage.getItem("superAdmin"));
+
+      if (superAdmin.userName === user) {
+        if (superAdmin.pass === pass) {
+          (superAdmin.login = true),
+            localStorage.setItem("superAdmin", JSON.stringify(superAdmin));
+          location.href = "/home-adminLog";
+          return;
+        } else {
+          alert("Usuario y/o contraseña no coinciden. CONTRASEÑA SUP.AD");
+          return;
+        }
+      }
+
       return alert("Usuario y/o contraseña no coinciden. USUARIO");
     }
 
     if (pass === userExist.pass) {
+      localStorage.removeItem("superAdmin");
       if (userExist.role === "admin") {
         const userIndex = usersLocalStorage.findIndex(
           (user) => user.id === userExist.id

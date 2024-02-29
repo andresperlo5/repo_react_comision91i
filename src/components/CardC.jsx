@@ -18,7 +18,9 @@ const CardC = ({ idProd, img, title, description, price, idPage }) => {
       );
 
       users[userIndex].fav = productosNoBorrados;
+      userLog.fav = productosNoBorrados;
       localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem("user", JSON.stringify(userLog));
       location.reload();
     }
   };
