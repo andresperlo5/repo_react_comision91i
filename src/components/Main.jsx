@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import Image from "./Image";
 import CardC from "./CardC";
 import { Col, Container, Row } from "react-bootstrap";
+import { useFakeStore } from "../helpers/userStatics";
 
 const Main = () => {
   const [products, setProducts] = useState([]);
 
   const getProducts = async () => {
-    const getAllProducts = await fetch("https://fakestoreapi.com/products");
-    const data = await getAllProducts.json();
+    const data = await useFakeStore();
+    localStorage.setItem("products", JSON.stringify(data));
     setProducts(data);
   };
 

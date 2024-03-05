@@ -56,10 +56,16 @@ const NavbarC = () => {
                 }>
                 Inicio
               </Nav.Link>
-              {superAdmin && pathName === "/home-adminLog" ? (
+              {(superAdmin && pathName === "/home-adminLog") ||
+              (superAdmin && pathName === "/home-adminLog/users") ||
+              (superAdmin && pathName === "/home-adminLog/products") ? (
                 <>
-                  <Nav.Link href="#link">Panel de Usuarios</Nav.Link>
-                  <Nav.Link href="#link">Panel de Productos</Nav.Link>
+                  <Nav.Link href="/home-adminLog/users">
+                    Panel de Usuarios
+                  </Nav.Link>
+                  <Nav.Link href="/home-adminLog/products">
+                    Panel de Productos
+                  </Nav.Link>
                 </>
               ) : (
                 <>
@@ -75,7 +81,10 @@ const NavbarC = () => {
               )}
             </Nav>
             <Nav className="ms-auto">
-              {userLog || (superAdmin && pathName === "/home-adminLog") ? (
+              {userLog ||
+              (superAdmin && pathName === "/home-adminLog") ||
+              (superAdmin && pathName === "/home-adminLog/users") ||
+              (superAdmin && pathName === "/home-adminLog/products") ? (
                 <Nav.Link href="#" onClick={() => logoutUser(userLog.id)}>
                   Cerrar Sesion
                 </Nav.Link>

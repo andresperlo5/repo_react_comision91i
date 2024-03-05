@@ -8,6 +8,8 @@ import ProductPage from "../pages/ProductPage";
 import FavPage from "../pages/FavPage";
 import CartPage from "../pages/CartPage";
 import AdminPage from "../pages/AdminPage";
+import AdminUsersPage from "../pages/AdminUsersPage";
+import AdminProductsPage from "../pages/AdminProductsPage";
 
 const RoutesViews = () => {
   return (
@@ -16,6 +18,8 @@ const RoutesViews = () => {
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/home-userLog" element={<UserLogPage />} />
         <Route path="/home-adminLog" element={<AdminPage />} />
+        <Route path="/home-adminLog/users" element={<AdminUsersPage />} />
+        <Route path="/home-adminLog/products" element={<AdminProductsPage />} />
         <Route path="/favorite" element={<FavPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/register" element={<RegisterPage />} />

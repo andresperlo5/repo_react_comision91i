@@ -2,18 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Image from "../components/Image";
 import Swal from "sweetalert2";
+import { useFakeStore } from "../helpers/userStatics";
 
 const ProductPage = () => {
   const params = useParams();
   const [product, setProduct] = useState({});
 
   const getOneProduct = async () => {
-    const getProduct = await fetch(
-      `https://fakestoreapi.com/products/${params.id}`
-    );
-
-    const data = await getProduct.json();
-    console.log(data);
+    const data = await useFakeStore(params.id);
     setProduct(data);
   };
 
