@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import clienteAxios, { config } from "../helpers/clienteAxios";
 
 const RegisterPage = () => {
   const [error, setError] = useState({
@@ -15,13 +16,15 @@ const RegisterPage = () => {
     rpass: "",
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const usersLocalStorage = JSON.parse(localStorage.getItem("users")) || [];
 
   const cambioDatosUsuario = (ev) => {
     setFormData({ ...formData, [ev.target.name]: ev.target.value });
   };
 
-  const enviarFormulario = (ev) => {
+  const enviarFormulario = async (ev) => {
     ev.preventDefault();
     const { user, pass, rpass } = formData;
 
@@ -54,44 +57,20 @@ const RegisterPage = () => {
 
     if (user) {
       if (pass === rpass) {
-        if (usersLocalStorage.length) {
-          const idUser = usersLocalStorage[usersLocalStorage.length - 1].id + 1;
+        setIsLoading(true);
+        const createUser = await clienteAxios.post(
+          "/users/register",
+          {
+            nombreUsuario: user,
+            contrasenia: pass,
+          },
+          config
+        );
 
-          const newUser = {
-            id: idUser,
-            userName: user,
-            pass,
-            cart: [],
-            fav: [],
-            role: "user",
-            delete: false,
-            login: true,
-          };
-          usersLocalStorage.push(newUser);
-          localStorage.setItem("users", JSON.stringify(usersLocalStorage));
-          localStorage.setItem("user", JSON.stringify(newUser));
-
-          setTimeout(() => {
-            location.href = "/home-userLog";
-          }, 1000);
-        } else {
-          const newUser = {
-            id: 1,
-            userName: user,
-            pass,
-            cart: [],
-            fav: [],
-            role: "user",
-            delete: false,
-            login: true,
-          };
-          usersLocalStorage.push(newUser);
-          localStorage.setItem("users", JSON.stringify(usersLocalStorage));
-          localStorage.setItem("user", JSON.stringify(newUser));
-
-          setTimeout(() => {
-            location.href = "/home-userLog";
-          }, 1000);
+        if (createUser.status === 201) {
+          alert("Usuario Creado");
+          setIsLoading(false);
+          location.href = "/login";
         }
       }
     }
@@ -148,7 +127,8 @@ const RegisterPage = () => {
             variant="success"
             type="submit"
             className="w-100"
-            onClick={enviarFormulario}>
+            onClick={enviarFormulario}
+            disabled={isLoading === true ? true : false}>
             Enviar Formulario
           </Button>
         </Form>

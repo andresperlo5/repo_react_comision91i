@@ -1,79 +1,62 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Image from "../components/Image";
-import Swal from "sweetalert2";
-import { useFakeStore } from "../helpers/userStatics";
+import clienteAxios, { config } from "../helpers/clienteAxios";
 
 const ProductPage = () => {
   const params = useParams();
   const [product, setProduct] = useState({});
 
   const getOneProduct = async () => {
-    const data = await useFakeStore(params.id);
-    setProduct(data);
+    const getProduct = await clienteAxios.get(`/products/${params.id}`, config);
+    setProduct(getProduct.data.getProduct);
   };
 
-  const addProdFav = () => {
-    const favLs = JSON.parse(localStorage.getItem("favs")) || [];
-    const userLog = JSON.parse(localStorage.getItem("user")) || "";
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+  const addProdFav = async () => {
+    try {
+      const token = JSON.parse(sessionStorage.getItem("token"));
 
-    if (userLog) {
-      const prodExistFav = userLog.fav.find((prod) => prod.id === product.id);
-      console.log(prodExistFav);
-      if (prodExistFav) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "El Producto ya existe en Favoritos!",
-        });
-        return;
+      if (token) {
+        const addProd = await clienteAxios.post(
+          `/favs/${product._id}`,
+          {},
+          config
+        );
+
+        if (addProd.status === 200) {
+          alert("Producto cargado correctamente");
+        }
+      } else {
+        location.href = "/login";
       }
-      userLog.fav.push(product);
-
-      const userIndex = users.findIndex((user) => user.id === userLog.id);
-      users[userIndex] = userLog;
-      localStorage.setItem("users", JSON.stringify(users));
-      localStorage.setItem("user", JSON.stringify(userLog));
-      Swal.fire({
-        title: "Felicidades!",
-        text: "El Producto se cargo correctamente a los Favoritos!",
-        icon: "success",
-      });
-    } else {
-      location.href = "/login";
+    } catch (error) {
+      if (error.response.status === 422) {
+        alert(error.response.data.msg);
+      }
     }
   };
 
-  const addProdCart = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const userLog = JSON.parse(localStorage.getItem("user")) || "";
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+  const addProdCart = async () => {
+    try {
+      const token = JSON.parse(sessionStorage.getItem("token"));
 
-    if (userLog) {
-      const prodExistFav = userLog.cart.find((prod) => prod.id === product.id);
-      console.log(prodExistFav);
-      if (prodExistFav) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "El Producto ya existe en el Carrito!",
-        });
-        return;
+      if (token) {
+        const addProd = await clienteAxios.post(
+          `/carts/${product._id}`,
+          {},
+          config
+        );
+
+        if (addProd.status === 200) {
+          alert("Producto cargado");
+        }
+      } else {
+        location.href = "/login";
       }
-      userLog.cart.push(product);
-
-      const userIndex = users.findIndex((user) => user.id === userLog.id);
-      users[userIndex] = userLog;
-      localStorage.setItem("users", JSON.stringify(users));
-      localStorage.setItem("user", JSON.stringify(userLog));
-      Swal.fire({
-        title: "Felicidades!",
-        text: "El Producto se cargo correctamente al Carrito!",
-        icon: "success",
-      });
-    } else {
-      location.href = "/login";
+    } catch (error) {
+      if (error.response.status === 422) {
+        alert(error.response.data.msg);
+      }
     }
   };
 
@@ -91,7 +74,7 @@ const ProductPage = () => {
           />
         </div>
         <div>
-          <p className="w-50">{product.description}</p>
+          <p className="w-50">${product.precio}</p>
           <p>{product.price}</p>
           <div className="d-flex">
             <button className="btn btn-success mx-3" onClick={addProdFav}>

@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import clienteAxios from "../helpers/clienteAxios";
 
 const AdminUsersPage = () => {
-  const usersLocalStorage = JSON.parse(localStorage.getItem("users")) || [];
-
+  const [users, setUsers] = useState([]);
   const [show, setShow] = useState(false);
   const [userEdit, setUserEdit] = useState({});
+
+  const usersLocalStorage = JSON.parse(localStorage.getItem("users")) || [];
+
+  const getUsers = async () => {
+    const allUsers = await clienteAxios.get("/users");
+    setUsers(allUsers.data.getUsers);
+  };
 
   const handleClose = () => setShow(false);
 
@@ -44,6 +51,10 @@ const AdminUsersPage = () => {
     }
   };
 
+  useEffect(() => {
+    getUsers();
+  }, []);
+
   return (
     <>
       <div className="d-flex justify-content-center">
@@ -57,8 +68,8 @@ const AdminUsersPage = () => {
             </tr>
           </thead>
           <tbody>
-            {usersLocalStorage.map((user) => (
-              <tr key={user.id}>
+            {users.map((user) => (
+              <tr key={user._id}>
                 <td>{user.id}</td>
                 <td>{user.userName}</td>
                 <td>{user.role === "user" ? "Usuario" : "Administrador"}</td>

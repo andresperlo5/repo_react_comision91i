@@ -1,12 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
+import clienteAxios, { config } from "../helpers/clienteAxios";
 
 const CartPage = () => {
-  const userLog = JSON.parse(localStorage.getItem("user"));
+  const [cart, setCart] = useState([]);
+
+  const getAllCart = async () => {
+    const getCart = await clienteAxios.get("/carts", config);
+    setCart(getCart.data.cart.products);
+  };
 
   useEffect(() => {
     document.title = "Usuario: Carrito";
   }, []);
+
+  useEffect(() => {
+    getAllCart();
+  }, []);
+
   return (
     <>
       <Table striped bordered hover>
@@ -20,8 +31,8 @@ const CartPage = () => {
           </tr>
         </thead>
         <tbody>
-          {userLog.cart.map((product) => (
-            <tr key={product.id}>
+          {cart.map((product) => (
+            <tr key={product._id}>
               <td>{product.id}</td>
               <td>{product.title}</td>
               <td>{product.price}</td>

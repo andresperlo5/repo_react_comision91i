@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import clienteAxios, { config } from "../helpers/clienteAxios";
 
 const LoginPage = () => {
   const [error, setError] = useState({
@@ -13,13 +14,11 @@ const LoginPage = () => {
     pass: "",
   });
 
-  const usersLocalStorage = JSON.parse(localStorage.getItem("users")) || [];
-
   const cambioDatosUsuario = (ev) => {
     setFormData({ ...formData, [ev.target.name]: ev.target.value });
   };
 
-  const enviarFormulario = (ev) => {
+  const enviarFormulario = async (ev) => {
     ev.preventDefault();
     const { user, pass } = formData;
 
@@ -38,51 +37,24 @@ const LoginPage = () => {
       return;
     }
 
-    const userExist = usersLocalStorage.find(
-      (userLS) => userLS.userName === user
+    const loginUser = await clienteAxios.post(
+      "/users/login",
+      {
+        nombreUsuario: user,
+        contrasenia: pass,
+      },
+      config
     );
 
-    if (!userExist) {
-      const superAdmin = JSON.parse(localStorage.getItem("superAdmin"));
+    if (loginUser.status === 200) {
+      sessionStorage.setItem("token", JSON.stringify(loginUser.data.token));
+      sessionStorage.setItem("role", JSON.stringify(loginUser.data.role));
 
-      if (superAdmin.userName === user) {
-        if (superAdmin.pass === pass) {
-          (superAdmin.login = true),
-            localStorage.setItem("superAdmin", JSON.stringify(superAdmin));
-          location.href = "/home-adminLog";
-          return;
-        } else {
-          alert("Usuario y/o contraseña no coinciden. CONTRASEÑA SUP.AD");
-          return;
-        }
-      }
-
-      return alert("Usuario y/o contraseña no coinciden. USUARIO");
-    }
-
-    if (pass === userExist.pass) {
-      localStorage.removeItem("superAdmin");
-      if (userExist.role === "admin") {
-        const userIndex = usersLocalStorage.findIndex(
-          (user) => user.id === userExist.id
-        );
-        usersLocalStorage[userIndex].login = true;
-
-        localStorage.setItem("users", JSON.stringify(usersLocalStorage));
-        localStorage.getItem("user", JSON.stringify(userExist));
+      if (loginUser.data.role === "admin") {
         location.href = "/home-adminLog";
       } else {
-        const userIndex = usersLocalStorage.findIndex(
-          (user) => user.id === userExist.id
-        );
-        usersLocalStorage[userIndex].login = true;
-
-        localStorage.setItem("users", JSON.stringify(usersLocalStorage));
-        localStorage.setItem("user", JSON.stringify(userExist));
         location.href = "/home-userLog";
       }
-    } else {
-      return alert("Usuario y/o contraseña no coinciden. CONTRASEÑA");
     }
   };
 

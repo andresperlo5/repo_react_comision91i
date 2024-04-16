@@ -1,8 +1,18 @@
+import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
+import clienteAxios from "../helpers/clienteAxios";
 
 const AdminProductsPage = () => {
-  const productsLocalStorage =
-    JSON.parse(localStorage.getItem("products")) || [];
+  const [products, setProducts] = useState([]);
+
+  const getProducts = async () => {
+    const allProducts = await clienteAxios.get("/products");
+    setProducts(allProducts.data.products);
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
 
   return (
     <>
@@ -20,13 +30,13 @@ const AdminProductsPage = () => {
             </tr>
           </thead>
           <tbody>
-            {productsLocalStorage.map((product) => (
-              <tr>
+            {products.map((product) => (
+              <tr key={product._id}>
                 <td>{product.id}</td>
                 <td>{product.title}</td>
                 <td>{product.description}</td>
                 <td>{product.category}</td>
-                <td>{product.price}</td>
+                <td>{product.precio}</td>
                 <td className="text-center">
                   <img src={product.image} alt="" width={25} />
                 </td>

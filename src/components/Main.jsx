@@ -2,15 +2,14 @@ import { useEffect, useState } from "react";
 import Image from "./Image";
 import CardC from "./CardC";
 import { Col, Container, Row } from "react-bootstrap";
-import { useFakeStore } from "../helpers/userStatics";
+import clienteAxios from "../helpers/clienteAxios";
 
 const Main = () => {
   const [products, setProducts] = useState([]);
 
   const getProducts = async () => {
-    const data = await useFakeStore();
-    localStorage.setItem("products", JSON.stringify(data));
-    setProducts(data);
+    const allProducts = await clienteAxios.get("/products");
+    setProducts(allProducts.data.products);
   };
 
   const url =
@@ -26,13 +25,13 @@ const Main = () => {
       <Container className="mt-5">
         <Row>
           {products.map((product) => (
-            <Col sm="12" md="4" lg="3" className="mt-3" key={product.id}>
+            <Col sm="12" md="4" lg="3" className="mt-3" key={product._id}>
               <CardC
-                idProd={product.id}
+                idProd={product._id}
                 img={product.image}
-                title={product.title}
+                title={product.nombre}
                 description={product.description}
-                price={product.price}
+                price={product.precio}
               />
             </Col>
           ))}
