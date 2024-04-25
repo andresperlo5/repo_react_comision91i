@@ -3,7 +3,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import clienteAxios from "../helpers/clienteAxios";
+import clienteAxios, { config } from "../helpers/clienteAxios";
 
 const AdminUsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -13,8 +13,8 @@ const AdminUsersPage = () => {
   const usersLocalStorage = JSON.parse(localStorage.getItem("users")) || [];
 
   const getUsers = async () => {
-    const allUsers = await clienteAxios.get("/users");
-    setUsers(allUsers.data.getUsers);
+    const allUsers = await clienteAxios.get("/users/enabledUser");
+    setUsers(allUsers.data.getUsersDelFalse);
   };
 
   const handleClose = () => setShow(false);
@@ -26,28 +26,44 @@ const AdminUsersPage = () => {
 
   const handleChange = (ev) => {
     const { name, value } = ev.target;
+    console.log(value);
+    console.log(name);
     setUserEdit({ ...userEdit, [name]: value });
   };
 
-  const handleClick = (ev) => {
-    ev.preventDefault();
-    const userIndex = usersLocalStorage.findIndex(
-      (user) => user.id === userEdit.id
-    );
-    usersLocalStorage[userIndex] = userEdit;
-    localStorage.setItem("users", JSON.stringify(usersLocalStorage));
-    location.reload();
+  const handleClick = async (ev) => {
+    try {
+      ev.preventDefault();
+      const updateUser = await clienteAxios.put(
+        `/users/${userEdit._id}`,
+        {
+          nombreUsuario: userEdit.nombreUsuario,
+          role: userEdit.role,
+        },
+        config
+      );
+      if (updateUser.status === 200) {
+        handleClose();
+        alert("Usuario Actualizado");
+        location.reload();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleClickDel = (idUser) => {
-    const filterUser = usersLocalStorage.filter((user) => user.id !== idUser);
+  const handleClickDel = async (idUser) => {
     const confirmDelUser = confirm(
       "Estas seguro de que quieres eliminar a este usuario?"
     );
 
     if (confirmDelUser) {
-      localStorage.setItem("users", JSON.stringify(filterUser));
-      location.reload();
+      const deleteUser = await clienteAxios.delete(`/users/${idUser}`, config);
+
+      if (deleteUser.status === 200) {
+        alert("Usuario borrado");
+        location.reload();
+      }
     }
   };
 
@@ -70,8 +86,8 @@ const AdminUsersPage = () => {
           <tbody>
             {users.map((user) => (
               <tr key={user._id}>
-                <td>{user.id}</td>
-                <td>{user.userName}</td>
+                <td>{user._id}</td>
+                <td>{user.nombreUsuario}</td>
                 <td>{user.role === "user" ? "Usuario" : "Administrador"}</td>
                 <td>
                   <Button variant="warning" onClick={() => editUser(user)}>
@@ -89,9 +105,9 @@ const AdminUsersPage = () => {
                           <Form.Control
                             type="text"
                             placeholder="Por Ej: usuArio123"
-                            value={userEdit.userName}
+                            value={userEdit.nombreUsuario}
                             onChange={handleChange}
-                            name="userName"
+                            name="nombreUsuario"
                           />
                         </Form.Group>
 
@@ -120,7 +136,8 @@ const AdminUsersPage = () => {
                   </Modal>
                   <button
                     className="btn btn-danger"
-                    onClick={() => handleClickDel(user.id)}>
+                    onClick={() => handleClickDel(user._id)}
+                    disabled={user.role === "admin" && true}>
                     Eliminar
                   </button>
                 </td>

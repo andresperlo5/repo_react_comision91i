@@ -19,41 +19,47 @@ const LoginPage = () => {
   };
 
   const enviarFormulario = async (ev) => {
-    ev.preventDefault();
-    const { user, pass } = formData;
+    try {
+      ev.preventDefault();
+      const { user, pass } = formData;
 
-    let newError = {};
+      let newError = {};
 
-    if (!user) {
-      newError = { ...newError, user: "errorUser" };
-    }
+      if (!user) {
+        newError = { ...newError, user: "errorUser" };
+      }
 
-    if (!pass) {
-      newError = { ...newError, pass: "errorPass" };
-    }
+      if (!pass) {
+        newError = { ...newError, pass: "errorPass" };
+      }
 
-    if (Object.keys(newError).length > 0) {
-      setError(newError);
-      return;
-    }
+      if (Object.keys(newError).length > 0) {
+        setError(newError);
+        return;
+      }
 
-    const loginUser = await clienteAxios.post(
-      "/users/login",
-      {
-        nombreUsuario: user,
-        contrasenia: pass,
-      },
-      config
-    );
+      const loginUser = await clienteAxios.post(
+        "/users/login",
+        {
+          nombreUsuario: user,
+          contrasenia: pass,
+        },
+        config
+      );
 
-    if (loginUser.status === 200) {
-      sessionStorage.setItem("token", JSON.stringify(loginUser.data.token));
-      sessionStorage.setItem("role", JSON.stringify(loginUser.data.role));
+      if (loginUser.status === 200) {
+        sessionStorage.setItem("token", JSON.stringify(loginUser.data.token));
+        sessionStorage.setItem("role", JSON.stringify(loginUser.data.role));
 
-      if (loginUser.data.role === "admin") {
-        location.href = "/home-adminLog";
-      } else {
-        location.href = "/home-userLog";
+        if (loginUser.data.role === "admin") {
+          location.href = "/home-adminLog";
+        } else {
+          location.href = "/home-userLog";
+        }
+      }
+    } catch (error) {
+      if (error.response.status === 403) {
+        alert("usuaio bloqueado. hablar con el admin del sitio");
       }
     }
   };

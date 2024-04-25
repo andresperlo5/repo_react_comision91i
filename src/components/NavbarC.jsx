@@ -1,9 +1,25 @@
+import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 import Image from "./Image";
+import Form from "react-bootstrap/Form";
+import clienteAxios, { config, configImg } from "../helpers/clienteAxios";
 
 const NavbarC = () => {
+  const [show, setShow] = useState(false);
+  const [imagen, setImagen] = useState(null);
+  const [product, setProduct] = useState({
+    nombre: "",
+    precio: 0,
+    codigo: "",
+  });
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const token = JSON.parse(sessionStorage.getItem("token"));
   const role = JSON.parse(sessionStorage.getItem("role"));
 
@@ -18,6 +34,29 @@ const NavbarC = () => {
     setTimeout(() => {
       location.href = "/";
     }, 1000);
+  };
+
+  const handleChange = (ev) => {
+    setProduct({ ...product, [ev.target.name]: ev.target.value });
+  };
+
+  const handleClick = async (ev) => {
+    ev.preventDefault();
+
+    const res = await clienteAxios.post("/products", product, config);
+    console.log(res.data.newProduct._id);
+    if (res.status === 201) {
+      const data = new FormData();
+      data.append("image", imagen);
+      console.log(data);
+      const addImageProd = await clienteAxios.post(
+        `/products/addImage/${res.data.newProduct._id}`,
+        data,
+        configImg
+      );
+
+      console.log(addImageProd);
+    }
   };
 
   return (
@@ -55,6 +94,66 @@ const NavbarC = () => {
                   <Nav.Link href="/home-adminLog/products">
                     Panel de Productos
                   </Nav.Link>
+                  <Button variant="primary" onClick={handleShow}>
+                    Crear Producto
+                  </Button>
+
+                  <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>Nuevo Producto</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <Form>
+                        <Form.Group className="mb-3" controlId="formBasicEmail">
+                          <Form.Label>Nombre</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="nombre"
+                            onChange={handleChange}
+                          />
+                        </Form.Group>
+
+                        <Form.Group
+                          className="mb-3"
+                          controlId="formBasicPassword">
+                          <Form.Label>Precio</Form.Label>
+                          <Form.Control
+                            type="number"
+                            name="precio"
+                            onChange={handleChange}
+                          />
+                        </Form.Group>
+
+                        <Form.Group
+                          className="mb-3"
+                          controlId="formBasicPassword">
+                          <Form.Label>Codigo</Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="codigo"
+                            onChange={handleChange}
+                          />
+                        </Form.Group>
+
+                        <Form.Group
+                          className="mb-3"
+                          controlId="formBasicPassword">
+                          <Form.Label>Imagen</Form.Label>
+                          <Form.Control
+                            type="file"
+                            onChange={(ev) => setImagen(ev.target.files[0])}
+                          />
+                        </Form.Group>
+
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          onClick={handleClick}>
+                          Enviar Datos
+                        </Button>
+                      </Form>
+                    </Modal.Body>
+                  </Modal>
                 </>
               ) : (
                 <>

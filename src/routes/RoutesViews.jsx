@@ -10,6 +10,7 @@ import CartPage from "../pages/CartPage";
 import AdminPage from "../pages/AdminPage";
 import AdminUsersPage from "../pages/AdminUsersPage";
 import AdminProductsPage from "../pages/AdminProductsPage";
+import RegisterFormik from "../pages/RegisterFormik";
 
 const RoutesViews = () => {
   return (
@@ -22,7 +23,8 @@ const RoutesViews = () => {
         <Route path="/home-adminLog/products" element={<AdminProductsPage />} />
         <Route path="/favorite" element={<FavPage />} />
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        {/*  <Route path="/register" element={<RegisterPage />} /> */}
+        <Route path="/register" element={<RegisterFormik />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="*" element={<ErrorPage />} />

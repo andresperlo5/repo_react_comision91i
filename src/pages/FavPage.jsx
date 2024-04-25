@@ -26,7 +26,7 @@ const FavPage = () => {
           {favs.map((product) => (
             <Col sm="12" md="6" lg="4" key={product._id}>
               <CardC
-                idProd={product.id}
+                idProd={product._id}
                 img={product.image}
                 title={product.title}
                 description={product.description}
