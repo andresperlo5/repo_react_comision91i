@@ -15,7 +15,6 @@ const RegisterFormik = () => {
         },
         config
       );
-      console.log(res);
     } else {
       alert("Las contraseñas no coinciden");
     }

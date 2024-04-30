@@ -43,8 +43,6 @@ const AdminProductsPage = () => {
       { formData },
       config
     );
-
-    console.log(updateProd);
   };
 
   const handleClose = () => setShow(false);

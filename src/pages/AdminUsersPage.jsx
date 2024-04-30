@@ -10,8 +10,6 @@ const AdminUsersPage = () => {
   const [show, setShow] = useState(false);
   const [userEdit, setUserEdit] = useState({});
 
-  const usersLocalStorage = JSON.parse(localStorage.getItem("users")) || [];
-
   const getUsers = async () => {
     const allUsers = await clienteAxios.get("/users/enabledUser");
     setUsers(allUsers.data.getUsersDelFalse);
@@ -26,8 +24,6 @@ const AdminUsersPage = () => {
 
   const handleChange = (ev) => {
     const { name, value } = ev.target;
-    console.log(value);
-    console.log(name);
     setUserEdit({ ...userEdit, [name]: value });
   };
 

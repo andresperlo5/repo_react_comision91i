@@ -44,7 +44,6 @@ const NavbarC = () => {
     ev.preventDefault();
 
     const res = await clienteAxios.post("/products", product, config);
-    console.log(res.data.newProduct._id);
     if (res.status === 201) {
       const data = new FormData();
       data.append("image", imagen);
@@ -54,8 +53,6 @@ const NavbarC = () => {
         data,
         configImg
       );
-
-      console.log(addImageProd);
     }
   };
 
